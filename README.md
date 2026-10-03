@@ -22,3 +22,10 @@ The trade-off is that the answer is instant-specific. A zone's offset and DST st
 ## Awkward edge
 
 `zoneinfo.available_timezones()` includes alias entries and, on some platforms, names that cannot actually be constructed. The tabulator deduplicates names and silently skips any zone that raises during construction, so the output is stable but may not include every name the platform lists. Offsets are reported in whole minutes; every real IANA zone in the modern database resolves to a whole-minute offset, so nothing is lost.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
